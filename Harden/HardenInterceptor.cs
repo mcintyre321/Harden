@@ -37,7 +37,7 @@ namespace Harden
                 var globalAllowMethod = (type.GetMethod("Allow"));
                 if (globalAllowMethod != null)
                 {
-                    var allowed = (bool) globalAllowMethod.Invoke(invocation.InvocationTarget, new object[] {invocation.Method});
+                    var allowed = (bool)globalAllowMethod.Invoke(invocation.InvocationTarget, new object[] { invocation.Method });
                     if (!allowed)
                     {
                         throw new HardenException("Not allowed to call " + invocation.Method.Name);
@@ -50,22 +50,43 @@ namespace Harden
                 var validateMethod = type.GetMethod("Validate" + name);
                 if (validateMethod != null)
                 {
-                    var argsQ = from p in validateMethod.GetParameters()
-                                from a in invocation.Arguments.Zip(invocation.Method.GetParameters(), (arg, pi) => new {pi.Name, arg})
-                                where p.Name == a.Name
-                                select a.arg;
-                    var args = argsQ.ToArray();
+                    object[] args = null;
+
+                    if (invocation.Arguments.Length > 1)
+                    {
+                        var argsQ = from p in validateMethod.GetParameters()
+                                    from a in
+                                        invocation.Arguments.Zip(invocation.Method.GetParameters(),
+                                                                 (arg, pi) => new { pi.Name, arg })
+                                    where p.Name == a.Name
+                                    select a.arg;
+                        args = argsQ.ToArray();
+                    }
+                    else
+                    {
+                        args = invocation.Arguments;
+                    }
                     var validationErrors = validateMethod.Invoke(invocation.InvocationTarget, args) as IEnumerable<Error>;
                     if (validationErrors != null)
                     {
                         validationErrors = validationErrors.ToArray();
                         if (validationErrors.Any())
                         {
+                            if (invocation.Method.Name.StartsWith("set_"))
+                            {
+                                foreach (var validationError in validationErrors)
+                                {
+                                    validationError.Field = name;
+                                }
+                            }
                             throw new ValidationException(invocation.InvocationTarget, validationErrors);
+
                         }
+
                     }
                 }
             }
+
 
             invocation.Proceed();
         }
@@ -114,8 +135,14 @@ namespace Harden
             Message = message;
         }
 
+        public Error(string message)
+        {
+            Message = message;
+        }
+
+
         public string Message { get; private set; }
 
-        public string Field { get; private set; }
+        public string Field { get; internal set; }
     }
 }

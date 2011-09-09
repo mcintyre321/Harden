@@ -66,6 +66,7 @@
     <Compile Include="PropertySets\CanDisallowSetUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertySets\CanDisallowSetUsingNamedMethod.cs" />
     <Compile Include="PropertySets\NamedMethodOverridesGlobalMethod.cs" />
+    <Compile Include="Validation\CanValidateSetPropertyParameter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

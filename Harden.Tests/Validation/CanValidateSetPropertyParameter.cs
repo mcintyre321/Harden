@@ -8,20 +8,15 @@ using NUnit.Framework;
 namespace Harden.Tests.Validation
 {
     [TestFixture]
-    public class CanValidateMethodParameters
+    public class CanValidateSetPropertyParameter
     {
         public class Pansy
         {
-            private string hobby;
+            public virtual string Hobby { get; set; }
 
-            public virtual void SetHobby(string ignore, string hobby, string ignoreMeToo) //the ignore parameters are there to show that you don't need to validate all paramters
+            public virtual IEnumerable<Error> ValidateHobby(string value)
             {
-                this.hobby = hobby;
-            }
-
-            public virtual IEnumerable<Error> ValidateSetHobby(string hobby)
-            {
-                if (hobby == "Picking flowers") yield return new Error("hobby", "Picking flowers isn't hard!");
+                if (value == "Picking flowers") yield return new Error("Picking flowers isn't hard!");
             }
 
         }
@@ -30,18 +25,18 @@ namespace Harden.Tests.Validation
         public void ValidationErrorsAreReturned()
         {
             var pansy = Hardener.Harden(new Pansy());
-            var ve = Assert.Throws<ValidationException>(() => pansy.SetHobby(null, "Picking flowers", null));
+            var ve = Assert.Throws<ValidationException>(() => pansy.Hobby = "Picking flowers");
             Assert.AreEqual(1, ve.Errors.Count());
             Assert.AreEqual(pansy, ve.Object);
             Assert.AreEqual("Picking flowers isn't hard!", ve.Errors.Single().Message);
-            Assert.AreEqual("hobby", ve.Errors.Single().Field);
+            Assert.AreEqual("Hobby", ve.Errors.Single().Field);
         }
 
         [Test]
         public void CanCallWithValidData()
         {
             var pansy = Hardener.Harden(new Pansy());
-            pansy.SetHobby(null, "Fighting", null);
+            pansy.Hobby = "Fighting";
         }
     }
 
