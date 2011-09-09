@@ -1,0 +1,17 @@
+obj
+bin
+deploy
+deploy/*
+_ReSharper.*
+*.csproj.user
+*.resharper.user
+*.ReSharper.user
+*.resharper
+*.suo
+*.cache
+~$*
+*.suo
+LPRun.5.1.ReSharper.user
+LPRun.5.1.ReSharper.user
+LPRun.suo
+LPRun.5.1.ReSharper.user
