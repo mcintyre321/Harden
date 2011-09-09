@@ -69,7 +69,7 @@ and properties
         if ((value ?? "").Length < 4) yield return new Error("c", "A REAL name must be entered!");      
     }
 
-Call with bad data and you get a ValidationException.
+Call with bad data and you get a single ValidationException with all the errors in it.
 
 Syntax
 ------
@@ -82,6 +82,11 @@ If you only want to do a property getter or setter, you can write AllowGetX or A
 To install Harden use the nuget browser or from the package manager console in VS:    
     
     PM> Install-Package Harden
+    
+Advanced usage
+--------------
+
+I hooked the HardenInterceptor up to my IOC container, now all my entities as as hard as nails. I hardened my API, and now I don't worry about script kiddies screwing with Joe Public's data.
     
 Remember HARD CODE IS GOOD CODE
     
