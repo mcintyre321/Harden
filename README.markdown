@@ -30,8 +30,8 @@ Heres an example of a class ready to be hardened:
 Now we harden it:
 
     var user = Hardener.Harden(user);
+    user.Ban; //You better be an admin, or you just got yourself a HardenException
 
-Now calling user.Ban, or setting or getting user.Email will throw a HardenException if the Allow method returns false.
 
 The Why
 -------
