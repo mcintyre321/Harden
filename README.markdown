@@ -32,6 +32,53 @@ Now we harden it:
 
 Now calling user.Ban, or setting or getting user.Email will throw a HardenException if the Allow method returns false.
 
+The Why
+-------
+
+Some of you might be asking why you need this. After all, the only people who can access against your model are you and other developers at your company...
+
+STOP. RIGHT. THERE.
+
+Like it or not, objects end up with internal state machines, with methods that should be called in certain ways.
+Whether it's someone else at your company, someone who used to work there or someone who will, at some point your objects are going to be misused, maltreated 
+
+and a new bug is going to have to be found and raised and fixed. Invalid calls to Hardened objects don't make it into the trunk.
+
+Of course, you don't need Harden to harden an object, but it helps.
+
+
+Validation
+----------
+
+OH yeah it validates method parameters too, so your
+
+    public virtual void DoSomething(DateTime a, DateTime b, string c, int d){ ... }
+    public IEnumerable<Error> ValidateDoSomething(DateTime a, DateTime b, string c) //d omitted as it doesn't need validation
+    {
+        if (a > b) yield return new Error("a", "First date must be on or before second");
+        if (c.IsRudeWord()) yield return new Error("c", "Naughty naughty!");
+    }
+
+
+and properties
+
+    public virtual string Name { get; set; }
+    public IEnumerable<Error> ValidateName(string value)
+    {
+        if (string.IsNullOrEmpty(value)) yield return new Error("c", "Name must be entered");
+        if ((value ?? "").Length < 4) yield return new Error("c", "A REAL name must be entered!");      
+    }
+
+Call with bad data and you get a ValidationException.
+
+Syntax
+------
+
+Pretty simple, AllowX methods must return bool, ValidateX methods return IEnumerable<Error>
+
+If you only want to do a property getter or setter, you can write AllowGetX or AllowSetY
+
+
 To install Harden use the nuget browser or from the package manager console in VS:    
     
     PM> Install-Package Harden
