@@ -6,11 +6,11 @@ Your domain model is weak. It's a pansy. It needs to be *Hardened*.
 
 Harden takes your objects and wraps them in a super hard layer, preventing code from being called when it's not meant to be called, in ways it's not meant to be called.
 
-Heres an example of a hardened class:
+Heres an example of a class ready to be hardened:
 
     public class User
     {
-        public virtual void Ban() { ... }
+        public virtual void Ban() { ... } //virtual so we can proxy it
 
         public bool AllowBan()
         {
@@ -26,4 +26,8 @@ Heres an example of a hardened class:
         }                
     }
 
+Now we harden it:
 
+    var user = Hardener.Harden(user);
+
+Now calling user.Ban, or setting or getting user.Email will throw a HardenException if the Allow method returns false.
