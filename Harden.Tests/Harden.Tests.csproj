@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Validation\CanValidateMethodParameters.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingNamedMethod.cs" />
     <Compile Include="PropertyGetsAndSets\NamedMethodOverridesGlobalMethod.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="PropertyGets\NamedMethodOverridesGlobalMethod.cs" />
     <Compile Include="MethodCalls\CanDisallowMethodUsingGlobalAllowMethod.cs" />
     <Compile Include="MethodCalls\CanDisallowMethodUsingNamedMethod.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="MethodCalls\NamedMethodOverridesGlobalMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertySets\CanDisallowSetUsingGlobalAllowMethod.cs" />
@@ -70,7 +70,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Harden\Harden.csproj">
+      <Project>{3F7E0967-0768-4702-B3AD-9ED268C84A13}</Project>
+      <Name>Harden</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

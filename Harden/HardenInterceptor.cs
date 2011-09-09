@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
 
@@ -42,6 +44,29 @@ namespace Harden
                     }
                 }
             }
+
+            if (invocation.Arguments.Length > 0) // we may need to validate these arguments...
+            {
+                var validateMethod = type.GetMethod("Validate" + name);
+                if (validateMethod != null)
+                {
+                    var argsQ = from p in validateMethod.GetParameters()
+                                from a in invocation.Arguments.Zip(invocation.Method.GetParameters(), (arg, pi) => new {pi.Name, arg})
+                                where p.Name == a.Name
+                                select a.arg;
+                    var args = argsQ.ToArray();
+                    var validationErrors = validateMethod.Invoke(invocation.InvocationTarget, args) as IEnumerable<Error>;
+                    if (validationErrors != null)
+                    {
+                        validationErrors = validationErrors.ToArray();
+                        if (validationErrors.Any())
+                        {
+                            throw new ValidationException(invocation.InvocationTarget, validationErrors);
+                        }
+                    }
+                }
+            }
+
             invocation.Proceed();
         }
 
@@ -50,7 +75,7 @@ namespace Harden
             var allowMethod = (type.GetMethod(allowMethodName));
             if (allowMethod != null)
             {
-                var allowed = (bool) allowMethod.Invoke(invocation.InvocationTarget, null);
+                var allowed = (bool)allowMethod.Invoke(invocation.InvocationTarget, null);
                 if (!allowed)
                 {
                     throw new HardenException("Not allowed to call " + invocation.Method.Name);
@@ -58,5 +83,39 @@ namespace Harden
             }
             return allowMethod;
         }
+    }
+    public class ValidationException : Exception
+    {
+        private List<Error> _errors = new List<Error>();
+        private object _object;
+
+        public ValidationException(object o, IEnumerable<Error> errors)
+        {
+            _object = o;
+            _errors.AddRange(errors);
+        }
+
+        public IEnumerable<Error> Errors
+        {
+            get { return _errors; }
+        }
+
+        public object Object
+        {
+            get { return _object; }
+        }
+    }
+
+    public class Error
+    {
+        public Error(string field, string message)
+        {
+            Field = field;
+            Message = message;
+        }
+
+        public string Message { get; private set; }
+
+        public string Field { get; private set; }
     }
 }
