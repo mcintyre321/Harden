@@ -31,3 +31,10 @@ Now we harden it:
     var user = Hardener.Harden(user);
 
 Now calling user.Ban, or setting or getting user.Email will throw a HardenException if the Allow method returns false.
+
+To install Harden use the nuget browser or from the package manager console in VS:    
+    
+    PM> Install-Package Harden
+    
+Remember HARD CODE IS GOOD CODE
+    
