@@ -79,7 +79,7 @@ namespace Harden
                                     validationError.Field = name;
                                 }
                             }
-                            throw new ValidationException(invocation.InvocationTarget, validationErrors);
+                            throw new ValidationException(invocation.Proxy, validationErrors);
 
                         }
 

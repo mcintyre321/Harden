@@ -8,7 +8,7 @@ namespace Harden
 
         public static T Harden<T>(T pansy) where T : class
         {
-            return proxyGenerator.CreateClassProxy<T>(new HardenInterceptor());
+            return proxyGenerator.CreateClassProxyWithTarget<T>(pansy, new HardenInterceptor());
         }
     }
 }

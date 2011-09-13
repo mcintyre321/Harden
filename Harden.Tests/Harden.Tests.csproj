@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CanWrapAnInstance\WrappingAnInstanceStillLetsYouAccessIt.cs" />
     <Compile Include="Validation\CanValidateMethodParameters.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingNamedMethod.cs" />
