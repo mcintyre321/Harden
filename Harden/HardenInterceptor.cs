@@ -10,7 +10,7 @@ namespace Harden
     {
         public void Intercept(IInvocation invocation)
         {
-            if (invocation.Method.Name.StartsWith("Allow"))
+            if (invocation.Method.Name.StartsWith("Allow") || invocation.Method.Name.StartsWith("Validate"))
             {
                 invocation.Proceed();
                 return;
