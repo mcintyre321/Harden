@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Hardener.cs" />
     <Compile Include="HardenException.cs" />
+    <Compile Include="HardenExtensions.cs" />
     <Compile Include="HardenInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

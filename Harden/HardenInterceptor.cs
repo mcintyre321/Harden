@@ -17,36 +17,19 @@ namespace Harden
             }
 
             var type = invocation.InvocationTarget.GetType();
-            string name = invocation.Method.Name;
-            MethodInfo allowMethod = null;
-            if (invocation.Method.Name.StartsWith("get_"))
+            
+            if ((invocation.InvocationTarget.Allow(invocation.Method)) == false)
             {
-                name = invocation.Method.Name.Substring(4);
-                allowMethod = allowMethod ?? AssertAllowed(invocation, "AllowGet" + name, type);
-            }
-            if (invocation.Method.Name.StartsWith("set_"))
-            {
-                name = invocation.Method.Name.Substring(4);
-                allowMethod = allowMethod ?? AssertAllowed(invocation, "AllowSet" + name, type);
-            }
-
-            allowMethod = allowMethod ?? AssertAllowed(invocation, "Allow" + name, type);
-
-            if (allowMethod == null) //only use global if no bespoke allow method
-            {
-                var globalAllowMethod = (type.GetMethod("Allow"));
-                if (globalAllowMethod != null)
-                {
-                    var allowed = (bool)globalAllowMethod.Invoke(invocation.InvocationTarget, new object[] { invocation.Method });
-                    if (!allowed)
-                    {
-                        throw new HardenException("Not allowed to call " + invocation.Method.Name);
-                    }
-                }
+                throw new HardenException("Not allowed to call " + invocation.Method.Name);
             }
 
             if (invocation.Arguments.Length > 0) // we may need to validate these arguments...
             {
+                string name = invocation.Method.Name;
+                if (name.StartsWith("set_"))
+                {
+                    name = name.Substring(4);
+                }
                 var validateMethod = type.GetMethod("Validate" + name);
                 if (validateMethod != null)
                 {
@@ -55,9 +38,7 @@ namespace Harden
                     if (invocation.Arguments.Length > 1)
                     {
                         var argsQ = from p in validateMethod.GetParameters()
-                                    from a in
-                                        invocation.Arguments.Zip(invocation.Method.GetParameters(),
-                                                                 (arg, pi) => new { pi.Name, arg })
+                                    from a in invocation.Arguments.Zip(invocation.Method.GetParameters(), (arg, pi) => new { pi.Name, arg })
                                     where p.Name == a.Name
                                     select a.arg;
                         args = argsQ.ToArray();
@@ -91,19 +72,6 @@ namespace Harden
             invocation.Proceed();
         }
 
-        private MethodInfo AssertAllowed(IInvocation invocation, string allowMethodName, Type type)
-        {
-            var allowMethod = (type.GetMethod(allowMethodName));
-            if (allowMethod != null)
-            {
-                var allowed = (bool)allowMethod.Invoke(invocation.InvocationTarget, null);
-                if (!allowed)
-                {
-                    throw new HardenException("Not allowed to call " + invocation.Method.Name);
-                }
-            }
-            return allowMethod;
-        }
     }
     public class ValidationException : Exception
     {

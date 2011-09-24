@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanWrapAnInstance\WrappingAnInstanceStillLetsYouAccessIt.cs" />
+    <Compile Include="AllowsExtension\AllowsExtensionActuallyWorks.cs" />
+    <Compile Include="Pluggability\CanPlugARuleIntoAllowProcess.cs" />
     <Compile Include="Validation\CanValidateMethodParameters.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingNamedMethod.cs" />
@@ -79,6 +81,7 @@
       <Name>Harden</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -36,7 +36,7 @@ namespace Harden.Tests.Validation
         [Test]
         public void CanCallWithValidData()
         {
-            var pansy = Hardener.Harden(new Pansy());
+            var pansy = Hardener.Create<Pansy>();
             pansy.Hobby = "Fighting";
         }
     }

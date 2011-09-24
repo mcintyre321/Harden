@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using Castle.DynamicProxy;
 
@@ -17,6 +19,25 @@ namespace Harden
         {
             return proxyGenerator.CreateClassProxy<T>(new HardenInterceptor());
         }
+
+        public static T Create<T>(Expression<Func<T>> create) where T : class
+        {
+            var constructorArguments = new List<object>();
+            foreach (var arg in ((NewExpression)create.Body).Arguments)
+            {
+                if (arg is ConstantExpression)
+                {
+                    constructorArguments.Add(((ConstantExpression)arg).Value);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            return (T)proxyGenerator.CreateClassProxy(typeof(T), constructorArguments.ToArray(), new HardenInterceptor());
+        }
+
+
         public static object Create(Type t)
         {
             return proxyGenerator.CreateClassProxy(t, new HardenInterceptor());
