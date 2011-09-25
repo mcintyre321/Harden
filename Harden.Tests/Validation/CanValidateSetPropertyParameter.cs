@@ -24,7 +24,7 @@ namespace Harden.Tests.Validation
         [Test]
         public void ValidationErrorsAreReturned()
         {
-            var pansy = Hardener.Harden(new Pansy());
+            var pansy = new Pansy().Harden();
             var ve = Assert.Throws<ValidationException>(() => pansy.Hobby = "Picking flowers");
             Assert.AreEqual(1, ve.Errors.Count());
             Assert.AreEqual(pansy, ve.Object);

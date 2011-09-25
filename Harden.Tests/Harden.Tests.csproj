@@ -44,6 +44,7 @@
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,6 +56,7 @@
     <Compile Include="CanWrapAnInstance\WrappingAnInstanceStillLetsYouAccessIt.cs" />
     <Compile Include="AllowsExtension\AllowsExtensionActuallyWorks.cs" />
     <Compile Include="Pluggability\CanPlugARuleIntoAllowProcess.cs" />
+    <Compile Include="ValidationExtension\CanAddAValidationRule.cs" />
     <Compile Include="Validation\CanValidateMethodParameters.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingNamedMethod.cs" />

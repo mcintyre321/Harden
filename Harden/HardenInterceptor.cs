@@ -18,56 +18,12 @@ namespace Harden
 
             var type = invocation.InvocationTarget.GetType();
             
-            if ((invocation.InvocationTarget.Allow(invocation.Method)) == false)
+            if (Harden.Allow.DoAllow(invocation.InvocationTarget, invocation.Method) == false)
             {
                 throw new HardenException("Not allowed to call " + invocation.Method.Name);
             }
 
-            if (invocation.Arguments.Length > 0) // we may need to validate these arguments...
-            {
-                string name = invocation.Method.Name;
-                if (name.StartsWith("set_"))
-                {
-                    name = name.Substring(4);
-                }
-                var validateMethod = type.GetMethod("Validate" + name);
-                if (validateMethod != null)
-                {
-                    object[] args = null;
-
-                    if (invocation.Arguments.Length > 1)
-                    {
-                        var argsQ = from p in validateMethod.GetParameters()
-                                    from a in invocation.Arguments.Zip(invocation.Method.GetParameters(), (arg, pi) => new { pi.Name, arg })
-                                    where p.Name == a.Name
-                                    select a.arg;
-                        args = argsQ.ToArray();
-                    }
-                    else
-                    {
-                        args = invocation.Arguments;
-                    }
-                    var validationErrors = validateMethod.Invoke(invocation.InvocationTarget, args) as IEnumerable<Error>;
-                    if (validationErrors != null)
-                    {
-                        validationErrors = validationErrors.ToArray();
-                        if (validationErrors.Any())
-                        {
-                            if (invocation.Method.Name.StartsWith("set_"))
-                            {
-                                foreach (var validationError in validationErrors)
-                                {
-                                    validationError.Field = name;
-                                }
-                            }
-                            throw new ValidationException(invocation.Proxy, validationErrors);
-
-                        }
-
-                    }
-                }
-            }
-
+            Validation.Execute(invocation.Proxy, invocation.Method, invocation.Arguments);
 
             invocation.Proceed();
         }

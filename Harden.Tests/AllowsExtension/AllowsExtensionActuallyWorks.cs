@@ -53,7 +53,7 @@ namespace Harden.Tests.AllowsExtension
         public void WorksWithMethodCallByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.Allow("SomeMethod"));
+            Assert.IsFalse(pansy.AllowCall("SomeMethod"));
         }
 
         //[Test]
@@ -73,13 +73,13 @@ namespace Harden.Tests.AllowsExtension
         public void WorksWithPropertyCallToSetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.Allow("get_SomeProperty"));
+            Assert.IsFalse(pansy.AllowCall("get_SomeProperty"));
         }
         [Test]
         public void WorksWithPropertyCallToGetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.Allow("set_SomeProperty"));
+            Assert.IsFalse(pansy.AllowCall("set_SomeProperty"));
         }
 
         [Test]

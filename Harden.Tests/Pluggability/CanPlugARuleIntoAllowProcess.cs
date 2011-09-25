@@ -23,7 +23,7 @@ namespace Harden.Tests.Pluggability
         [Test]
         public void CanNotCallDisallowedMethod()
         {
-            HardenExtensions.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
+            Allow.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
             var pansy = Hardener.Create(() => new Pansy());
             NotAllowedByDynamicRuleAttribute.Allow = false;
             Assert.Throws<HardenException>(() => pansy.Weaknesses());
@@ -32,7 +32,7 @@ namespace Harden.Tests.Pluggability
         [Test]
         public void CanCallAllowedMethod()
         {
-            HardenExtensions.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
+            Allow.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
             var pansy = Hardener.Create(() => new Pansy());
             NotAllowedByDynamicRuleAttribute.Allow = true;
             Assert.AreEqual("Peanut allergy", pansy.Weaknesses());
@@ -42,7 +42,7 @@ namespace Harden.Tests.Pluggability
     internal class NotAllowedByDynamicRuleAttribute : Attribute
     {
         public static bool? Allow;
-        public readonly static Func<dynamic, MethodInfo, bool?> Rule = (o, mi) =>
+        public readonly static Allow.AllowRule Rule = (o, mi) =>
         {
             var att = mi.GetCustomAttributes(typeof(NotAllowedByDynamicRuleAttribute), true).Cast<NotAllowedByDynamicRuleAttribute>().SingleOrDefault();
             if (att != null)
