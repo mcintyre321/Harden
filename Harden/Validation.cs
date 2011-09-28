@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Harden.ValidationAttributes;
 
 namespace Harden
 {
@@ -13,6 +14,9 @@ namespace Harden
         static Validation()
         {
             Rules = new List<ValidationRule>();
+            Rules.AddFor<NotNullAttribute>(NotNullAttribute.ValidationRule);
+            Rules.AddFor<LengthAttribute>(LengthAttribute.ValidationRule);
+
         }
 
         internal static void Execute(object obj, MethodInfo mi, object[] arguments)
@@ -42,7 +46,16 @@ namespace Harden
                     {
                         args = arguments;
                     }
-                    var validationErrors = validateMethod.Invoke(obj, args) as IEnumerable<Error>;
+                    var validationErrorsObj = validateMethod.Invoke(obj, args);
+                    var validationErrors = validationErrorsObj as IEnumerable<Error>;
+                    if (validationErrors == null)
+                    {
+                        var validationStrings = validationErrorsObj as IEnumerable<string>;
+                        if (validationStrings != null)
+                        {
+                            validationErrors = validationStrings.Select(s => new Error(s));
+                        }
+                    }
                     if (validationErrors != null) errors.AddRange(validationErrors);
                 }
 
@@ -66,4 +79,39 @@ namespace Harden
             }
         }
     }
+
+    //internal static class ValidatioRuleConfigExtensions
+    //{
+    //    public static void AddFor<TAttribute>(this IList<Validation.ValidationRule> rules, AttributeRuleImpl<TAttribute> rule)
+    //    {
+    //        rules.Add(MakeRule<TAttribute>(rule));
+    //    }
+
+    //    public delegate IEnumerable<Tuple<string, string>> AttributeRuleImpl<TAtt>(TAtt att, object o, MethodInfo mi, object[] parameters);
+    //    static Validation.ValidationRule MakeRule<TAttribute>(AttributeRuleImpl<TAttribute> rule)
+    //    {
+    //        return (obj, mi, args) => AttributeValidationRule(rule, obj, mi, args);
+    //    }
+    //    private static IEnumerable<Tuple<string, string>> AttributeValidationRule<TAttribute>(AttributeRuleImpl<TAttribute> rule, dynamic obj, MethodInfo mi, object[] args)
+    //    {
+    //        var isProperty = mi.Name.StartsWith("set_");
+    //        var name = isProperty ? mi.Name.Substring(4) : mi.Name;
+    //        var atts = isProperty
+    //                       ? mi.DeclaringType.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetCustomAttributes(typeof(TAttribute), true)
+    //                       : mi.GetCustomAttributes(typeof(TAttribute), true);
+
+    //        if (atts != null && atts.Any())
+    //        {
+    //            var att = (TAttribute)atts.Single();
+    //            if (att != null)
+    //            {
+    //                foreach (var validationErrorMessage in rule(att, obj, mi, args))
+    //                {
+    //                    yield return validationErrorMessage;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+
 }

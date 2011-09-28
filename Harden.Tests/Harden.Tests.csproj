@@ -56,7 +56,8 @@
     <Compile Include="CanWrapAnInstance\WrappingAnInstanceStillLetsYouAccessIt.cs" />
     <Compile Include="AllowsExtension\AllowsExtensionActuallyWorks.cs" />
     <Compile Include="Pluggability\CanPlugARuleIntoAllowProcess.cs" />
-    <Compile Include="ValidationExtension\CanAddAValidationRule.cs" />
+    <Compile Include="ValidationPluggability\PropertyValidationWorks.cs" />
+    <Compile Include="ValidationPluggability\ValidationAttributesWork.cs" />
     <Compile Include="Validation\CanValidateMethodParameters.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingGlobalAllowMethod.cs" />
     <Compile Include="PropertyGetsAndSets\CanDisallowPropertyUsingNamedMethod.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="PropertySets\CanDisallowSetUsingNamedMethod.cs" />
     <Compile Include="PropertySets\NamedMethodOverridesGlobalMethod.cs" />
     <Compile Include="Validation\CanValidateSetPropertyParameter.cs" />
+    <Compile Include="Validation\ValidateBlocksCanReturnStrings.cs" />
     <Compile Include="Validation\GlobalAllowsDoNotBlockValidateMethods.cs" />
   </ItemGroup>
   <ItemGroup>

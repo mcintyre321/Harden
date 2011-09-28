@@ -15,10 +15,8 @@ namespace Harden
                 invocation.Proceed();
                 return;
             }
-
-            var type = invocation.InvocationTarget.GetType();
             
-            if (Harden.Allow.DoAllow(invocation.InvocationTarget, invocation.Method) == false)
+            if (Harden.Allow.DoAllow(invocation.Proxy, invocation.Method) == false)
             {
                 throw new HardenException("Not allowed to call " + invocation.Method.Name);
             }

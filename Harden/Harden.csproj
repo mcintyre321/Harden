@@ -45,12 +45,16 @@
   <ItemGroup>
     <Compile Include="Allow.cs" />
     <Compile Include="Hardener.cs" />
+    <Compile Include="HardenerExtensions.cs" />
     <Compile Include="HardenException.cs" />
     <Compile Include="HardenExtensions.cs" />
     <Compile Include="HardenInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticReflector.cs" />
     <Compile Include="Validation.cs" />
+    <Compile Include="ValidationAttributes\LengthAttribute.cs" />
+    <Compile Include="ValidationAttributes\NotNullAttribute.cs" />
+    <Compile Include="ValidationRuleConfigExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
