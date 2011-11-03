@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="CanWrapAnInstance\WrappingAnInstanceStillLetsYouAccessIt.cs" />
     <Compile Include="AllowsExtension\AllowsExtensionActuallyWorks.cs" />
+    <Compile Include="MethodCalls\NamedMethodReturningNullFallsbackToGlobalMethod.cs" />
     <Compile Include="Pluggability\CanPlugARuleIntoAllowProcess.cs" />
     <Compile Include="ValidationPluggability\PropertyValidationWorks.cs" />
     <Compile Include="ValidationPluggability\ValidationAttributesWork.cs" />

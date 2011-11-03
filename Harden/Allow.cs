@@ -68,7 +68,7 @@ namespace Harden
             var allowMethod = (type.GetMethod(allowMethodName));
             if (allowMethod != null)
             {
-                var allowed = (bool)allowMethod.Invoke(target, null);
+                var allowed = (bool?)allowMethod.Invoke(target, null);
                 return allowed;
             }
             return null;
