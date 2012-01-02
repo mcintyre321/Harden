@@ -10,7 +10,7 @@ namespace Harden.ValidationAttributes
         public static IEnumerable<Tuple<string, string>> ValidationRule(NotNullAttribute att, object o, MethodInfo mi, object[] parameters)
         {
             var param = parameters.SingleOrDefault();
-            if (param == null) yield return Tuple.Create(mi.Name, "Required");
+            if (param == null) yield return Tuple.Create(mi.GetParameters().Single().Name, "Required");
         }
     }
 }

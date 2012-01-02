@@ -27,8 +27,8 @@ namespace Harden.ValidationAttributes
             var param = parameters.SingleOrDefault();
             if (param == null) yield break;
             var stringRep = param.ToString();
-            if (stringRep.Length < att.Min) yield return Tuple.Create(mi.Name, "Must be at least " + att.Min + " characters long");
-            if (stringRep.Length > att.Max) yield return Tuple.Create(mi.Name, "Must be at most " + att.Max + " characters long");
+            if (stringRep.Length < att.Min) yield return Tuple.Create(mi.GetParameters().Single().Name, "Must be at least " + att.Min + " characters long");
+            if (stringRep.Length > att.Max) yield return Tuple.Create(mi.GetParameters().Single().Name, "Must be at most " + att.Max + " characters long");
         }
     }
 }
