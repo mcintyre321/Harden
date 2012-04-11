@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Harden : Harden your .NET objects" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Harden</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mcintyre321/Harden">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Harden</h1>
+          <h2 id="project_tagline">Harden your .NET objects</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/mcintyre321/Harden/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/mcintyre321/Harden/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <blockquote>
+<p>Your domain model is weak. It's a pansy. It needs to be <em>Hardened</em>.</p>
+</blockquote>
+
+<p>Harden takes your objects and wraps them in a super hard layer, preventing code from being called when it's not meant to be called, in ways it's not meant to be called.</p>
+
+<p>Heres an example of a class ready to be hardened:</p>
+
+<pre><code>public class User
+{
+    public virtual void Ban() { ... } //virtual so we can proxy it
+
+    public bool AllowBan()
+    {
+        return Context.CurrentUser.IsAdmin; //only admins can Ban users
+    }
+
+    public virtual string Email { get; set; }
+
+    public bool AllowEmail()
+    {
+        return Context.CurrentUser.IsAdmin || Context.CurrentUser == this;
+        //only admins can see or change other peoples emails
+    }                
+}
+</code></pre>
+
+<p>Now we harden it:</p>
+
+<pre><code>var user = Hardener.Harden(user);
+user.Ban; //You better be an admin, or you just got yourself a HardenException
+</code></pre>
+
+<h2>The Why</h2>
+
+<p>Some of you might be asking why you need this. After all, the only people who can access against your model are you and other developers at your company...</p>
+
+<p>STOP. RIGHT. THERE.</p>
+
+<p>Like it or not, objects end up with internal state machines, with methods that should be called in certain ways.
+Whether it's someone else at your company, someone who used to work there or someone who will, at some point your objects are going to be misused, maltreated </p>
+
+<p>and a new bug is going to have to be found and raised and fixed. Invalid calls to Hardened objects don't make it into the trunk.</p>
+
+<p>Of course, you don't need Harden to harden an object, but it helps.</p>
+
+<h2>Validation</h2>
+
+<p>OH yeah it validates method parameters too, so your</p>
+
+<pre><code>public virtual void DoSomething(DateTime a, DateTime b, string c, int d){ ... }
+public IEnumerable&lt;Error&gt; ValidateDoSomething(DateTime a, DateTime b, string c) //d omitted as it doesn't need validation
+{
+    if (a &gt; b) yield return new Error("a", "First date must be on or before second");
+    if (c.IsRudeWord()) yield return new Error("c", "Naughty naughty!");
+}
+</code></pre>
+
+<p>and properties</p>
+
+<pre><code>public virtual string Name { get; set; }
+public IEnumerable&lt;Error&gt; ValidateName(string value)
+{
+    if (string.IsNullOrEmpty(value)) yield return new Error("c", "Name must be entered");
+    if ((value ?? "").Length &lt; 4) yield return new Error("c", "A REAL name must be entered!");      
+}
+</code></pre>
+
+<p>Call with bad data and you get a single ValidationException with all the errors in it.</p>
+
+<h2>Syntax</h2>
+
+<p>Pretty simple, AllowX methods must return bool, ValidateX methods return IEnumerable</p>
+
+<p>If you only want to do a property getter or setter, you can write AllowGetX or AllowSetY</p>
+
+<p>To install Harden use the nuget browser or from the package manager console in VS:    </p>
+
+<pre><code>PM&gt; Install-Package Harden
+</code></pre>
+
+<h2>Advanced usage</h2>
+
+<p>I hooked the HardenInterceptor up to my IOC container, now all my entities as as hard as nails. I hardened my API, and now I don't worry about script kiddies screwing with Joe Public's data.</p>
+
+<p>Remember HARD CODE IS GOOD CODE</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Harden maintained by <a href="https://github.com/mcintyre321">mcintyre321</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
