@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -8,58 +9,64 @@ namespace Harden
     public static class Allow
     {
         public delegate bool? AllowRule(dynamic obj, MethodInfo methodBeingCalled);
+
         static Allow()
         {
-            Rules = new List<AllowRule>();
+            Rules = new List<AllowRule>()
+            {
+                CheckAllowGetX,
+                CheckAllowSetX,
+                CheckAllowX,
+                CheckClassLevelAllow
+            };
         }
+
         public static List<AllowRule> Rules { get; private set; }
-        
-        //public static bool Call<T>(Expression<Func<T>> t)
-        //{
-        //    var tup = GetObjAndMethod(t);
-        //    return tup.Item1.Allow(tup.Item2);
-        //}
-        //public static bool Call(Expression<Action> t)
-        //{
-        //    var tup = GetObjAndMethod<Expression<Action>>(t);
-        //    return tup.Item1.Allow(tup.Item2);
-        //}
+
+
+        public static AllowRule CheckAllowGetX = (o, mi) =>
+        {
+            if (mi.Name.StartsWith("get_"))
+            {
+                var name = mi.Name.Substring(4);
+                return ExecuteAllowMethod(o, "AllowGet" + name);
+            }
+            return null;
+        };
+        public static AllowRule CheckAllowSetX = (o, mi) =>
+        {
+            if (mi.Name.StartsWith("set_"))
+            {
+                var name = mi.Name.Substring(4);
+                return ExecuteAllowMethod(o, "AllowSet" + name);
+            }
+            return null;
+        };
+
+        public static AllowRule CheckAllowX = (o, mi) =>
+        {
+            string name = mi.Name;
+            if (name.StartsWith("get_") || name.StartsWith("set_"))
+            {
+                name = mi.Name.Substring(4);
+            }
+            return ExecuteAllowMethod(o, "Allow" + name);
+        };
+
+        private static AllowRule CheckClassLevelAllow = (o, mi) =>
+        {
+            var globalAllowMethod = (mi.DeclaringType.GetMethod("Allow"));
+            if (globalAllowMethod != null)
+            {
+                return globalAllowMethod.Invoke(o, new object[] {mi}) as bool?;
+            }
+            return null;
+        };
         #region nuts n bolts (DoAllow)
 
         internal static bool DoAllow(object obj, MethodInfo mi)
         {
-            var type = obj.GetType();
-            var methodName = mi.Name;
-            bool? allowed = null;
-            string name = methodName;
-            if (methodName.StartsWith("get_"))
-            {
-                name = methodName.Substring(4);
-                allowed = allowed ?? ExecuteAllowMethod(obj, "AllowGet" + name);
-            }
-            if (methodName.StartsWith("set_"))
-            {
-                name = methodName.Substring(4);
-                allowed = allowed ?? ExecuteAllowMethod(obj, "AllowSet" + name);
-            }
-
-            foreach (var rule in Rules)
-            {
-                allowed = allowed ?? rule(obj, mi);
-            }
-
-            allowed = allowed ?? ExecuteAllowMethod(obj, "Allow" + name);
-
-            if (allowed == null) //only use global if no bespoke allow method
-            {
-                var globalAllowMethod = (type.GetMethod("Allow"));
-                if (globalAllowMethod != null)
-                {
-                    allowed = globalAllowMethod.Invoke(obj, new object[] { mi }) as bool?;
-
-                }
-            }
-            return allowed ?? true;
+            return Rules.Select(r => r(obj, mi)).FirstOrDefault(r => r != null) ?? true;
         }
 
         private static bool? ExecuteAllowMethod(object target, string allowMethodName)
