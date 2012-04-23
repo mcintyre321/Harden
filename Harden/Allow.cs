@@ -53,7 +53,7 @@ namespace Harden
             return ExecuteAllowMethod(o, "Allow" + name);
         };
 
-        private static AllowRule CheckClassLevelAllow = (o, mi) =>
+        public static AllowRule CheckClassLevelAllow = (o, mi) =>
         {
             var globalAllowMethod = (mi.DeclaringType.GetMethod("Allow"));
             if (globalAllowMethod != null)
