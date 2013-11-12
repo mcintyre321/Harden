@@ -15,7 +15,6 @@ namespace Harden
                 invocation.Proceed();
                 return;
             }
-            
             if (Harden.Allow.DoAllow(invocation.Proxy, invocation.Method) == false)
             {
                 throw new HardenException("Not allowed to call " + invocation.Method.Name);

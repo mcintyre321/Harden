@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Castle.Core.Internal;
 
 namespace Harden
 {
@@ -17,8 +18,25 @@ namespace Harden
                 CheckAllowGetX,
                 CheckAllowSetX,
                 CheckAllowX,
-                CheckClassLevelAllow
+                CheckClassLevelAllow,
+                CheckAttributes
             };
+        }
+
+        private static bool? CheckAttributes(object obj, MethodInfo methodbeingcalled)
+        {
+            var attributes = methodbeingcalled.GetAttributes<IAllowRule>();
+            var propertyInfo = GetPropFromMethod(methodbeingcalled.DeclaringType, methodbeingcalled);
+            if (propertyInfo != null) attributes = attributes.Concat(propertyInfo.GetAttributes<IAllowRule>()).ToArray();
+            return attributes
+                .Select(r => r.Allow(obj, methodbeingcalled)).FirstOrDefault(v => v != null);
+        }
+
+        public static PropertyInfo GetPropFromMethod(Type t, MethodInfo method)
+        {
+            if (!method.IsSpecialName) return null;
+            return t.GetProperty(method.Name.Substring(4),
+              BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
         }
 
         public static List<AllowRule> Rules { get; private set; }
