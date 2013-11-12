@@ -75,9 +75,14 @@ Call with bad data and you get a single ValidationException with all the errors 
 Syntax
 ------
 
-Pretty simple, AllowX methods must return bool, ValidateX methods return IEnumerable<Error>
+Pretty simple, AllowX methods must return bool? (null means that this method isn't sure whether to allow or deny), ValidateX methods return IEnumerable<Error>
 
 If you only want to do a property getter or setter, you can write AllowGetX or AllowSetY
+
+If you want to put an allow method for all properties, you can write:
+
+> public bool? Allow(MethodInfo calledMethodInfo)
+
 
 
 To install Harden use the nuget browser or from the package manager console in VS:    
