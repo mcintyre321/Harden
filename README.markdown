@@ -96,3 +96,7 @@ I hooked the HardenInterceptor up to my IOC container, now all my entities as as
     
 Remember HARD CODE IS GOOD CODE
     
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mcintyre321/harden/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
