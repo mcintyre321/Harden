@@ -8,6 +8,13 @@ namespace Harden
 {
     public class HardenInterceptor : IInterceptor
     {
+        private Allower _allower;
+
+        public HardenInterceptor(Allower allower)
+        {
+            _allower = allower;
+        }
+
         public void Intercept(IInvocation invocation)
         {
             if (invocation.Method.Name.StartsWith("Allow") || invocation.Method.Name.StartsWith("Validate"))
@@ -15,7 +22,7 @@ namespace Harden
                 invocation.Proceed();
                 return;
             }
-            if (Harden.Allow.DoAllow(invocation.Proxy, invocation.Method) == false)
+            if (_allower.DoAllow(invocation.Proxy, invocation.Method) == false)
             {
                 throw new HardenException("Not allowed to call " + invocation.Method.Name);
             }

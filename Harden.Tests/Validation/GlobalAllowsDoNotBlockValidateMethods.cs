@@ -29,14 +29,14 @@ namespace Harden.Tests.Validation
         [Test]
         public void ValidationErrorsAreReturnedEvenThoughMethodsAreDisallowed()
         {
-            var pansy = Hardener.Create<Pansy>();
+            var pansy = Hardener.Create<Pansy>(Allow.Allower);
             Assert.Throws<ValidationException>(() => pansy.Hobby = "Picking flowers");
         }
 
         [Test]
         public void CanCallWithValidData()
         {
-            var pansy = Hardener.Create<Pansy>();
+            var pansy = Hardener.Create<Pansy>(Allow.Allower);
             pansy.Hobby = "Fighting";
         }
     }

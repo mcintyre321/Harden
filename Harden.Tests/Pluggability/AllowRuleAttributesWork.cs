@@ -33,7 +33,7 @@ namespace Harden.Tests.Pluggability
         public void CanNotCallDisallowedMethod()
         {
 
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             Assert.Throws<HardenException>(() => pansy.Weaknesses());
         }
 
@@ -41,7 +41,7 @@ namespace Harden.Tests.Pluggability
         public void CanNotCallDisallowedProperty()
         {
 
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             string x;
             Assert.Throws<HardenException>(() => x = pansy.Weakness);
         }

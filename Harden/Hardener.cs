@@ -11,15 +11,15 @@ namespace Harden
 
         public static T Harden<T>(T pansy) where T : class
         {
-            return proxyGenerator.CreateClassProxyWithTarget<T>(pansy, new HardenInterceptor());
+            return proxyGenerator.CreateClassProxyWithTarget<T>(pansy, new HardenInterceptor(Allow.Allower));
         }
 
-        public static T Create<T>() where T : class
+        public static T Create<T>(Allower allower) where T : class
         {
-            return proxyGenerator.CreateClassProxy<T>(new HardenInterceptor());
+            return proxyGenerator.CreateClassProxy<T>(new HardenInterceptor(allower));
         }
 
-        public static T Create<T>(Expression<Func<T>> create) where T : class
+        public static T Create<T>(Expression<Func<T>> create, Allower allower) where T : class
         {
             var constructorArguments = new List<object>();
             foreach (var arg in ((NewExpression)create.Body).Arguments)
@@ -33,13 +33,13 @@ namespace Harden
                     throw new NotImplementedException();
                 }
             }
-            return (T)proxyGenerator.CreateClassProxy(typeof(T), constructorArguments.ToArray(), new HardenInterceptor());
+            return (T)proxyGenerator.CreateClassProxy(typeof(T), constructorArguments.ToArray(), new HardenInterceptor(allower));
         }
 
 
-        public static object Create(Type t)
+        public static object Create(Type t, Allower allower)
         {
-            return proxyGenerator.CreateClassProxy(t, new HardenInterceptor());
+            return proxyGenerator.CreateClassProxy(t, new HardenInterceptor(allower));
         }
     }
 }

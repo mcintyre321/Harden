@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -7,23 +6,18 @@ using Castle.Core.Internal;
 
 namespace Harden
 {
-    public static class Allow
+    public class Allow
     {
-        public delegate bool? AllowRule(dynamic obj, MethodInfo methodBeingCalled);
-
         static Allow()
         {
-            Rules = new List<AllowRule>()
-            {
-                CheckAllowGetX,
-                CheckAllowSetX,
-                CheckAllowX,
-                CheckClassLevelAllow,
-                CheckAttributes
-            };
+            Allower = new Allower();
         }
 
-        private static bool? CheckAttributes(object obj, MethodInfo methodbeingcalled)
+        public static Allower Allower;
+
+        public delegate bool? AllowRule(dynamic obj, MethodInfo methodBeingCalled);
+
+        public static bool? CheckAttributes(object obj, MethodInfo methodbeingcalled)
         {
             var attributes = methodbeingcalled.GetAttributes<IAllowRule>();
             var propertyInfo = GetPropFromMethod(methodbeingcalled.DeclaringType, methodbeingcalled);
@@ -39,7 +33,7 @@ namespace Harden
               BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
         }
 
-        public static List<AllowRule> Rules { get; private set; }
+      
 
 
         public static AllowRule CheckAllowGetX = (o, mi) =>
@@ -82,10 +76,7 @@ namespace Harden
         };
         #region nuts n bolts (DoAllow)
 
-        internal static bool DoAllow(object obj, MethodInfo mi)
-        {
-            return Rules.Select(r => r(obj, mi)).FirstOrDefault(r => r != null) ?? true;
-        }
+         
 
         private static bool? ExecuteAllowMethod(object target, string allowMethodName)
         {
@@ -106,44 +97,37 @@ namespace Harden
         }
         public static bool Call(object o, MethodInfo mi)
         {
-            return DoAllow(o, mi);
+            return Allower.Call(o, mi);
         }
+
         #region Get
         public static bool Get<T>(Expression<Func<T>> t)
         {
-            var tup = StaticReflector.GetObjAndProp(t);
-            return DoAllow(tup.Item1, tup.Item2.GetGetMethod());
+            return Allower.Get(t);
         }
+
         public static bool Get(object obj, string propertyName)
         {
-            var prop = obj.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public);
-            return Get(obj, prop);
+            return Allower.Get(obj, propertyName);
         }
+
         public static bool Get(object o, PropertyInfo pi)
         {
-            if (!pi.CanRead) return false;
-            var get = pi.GetGetMethod();
-            if (get == null) return false;
-            return DoAllow(o, get);
+            return Allower.Get(o, pi);
         }
         #endregion
         #region set
         public static bool Set(object o, PropertyInfo pi)
         {
-            if (!pi.CanWrite) return false;
-            var set = pi.GetSetMethod();
-            if (set == null) return false;
-            return DoAllow(o, set);
+            return Allower.Set(o, pi);
         }
         public static bool Set(object obj, string propertyName)
         {
-            var prop = obj.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public);
-            return Set(obj, prop);
+            return Allower.Set(obj, propertyName);
         }
         public static bool Set<T>(Expression<Func<T>> t)
         {
-            var tup = StaticReflector.GetObjAndProp(t);
-            return DoAllow(tup.Item1, tup.Item2.GetSetMethod());
+            return Allower.Set(t);
         }
         #endregion
     }

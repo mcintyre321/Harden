@@ -21,7 +21,7 @@ namespace Harden.Tests.ValidationPluggability
         public void NotNullWorks()
         {
             //Harden.Validation.Rules.Add(ValidateRequiredAttribute);
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             pansy.SomeProperty = "Not going to throw an error";
             var ve = Assert.Throws<ValidationException>(() => pansy.SomeProperty = null);
             Assert.AreEqual(ve.Errors.Single().Field, "SomeProperty");
@@ -32,7 +32,7 @@ namespace Harden.Tests.ValidationPluggability
         public void LengthAllowed()
         {
             //Harden.Validation.Rules.Add(ValidateRequiredAttribute);
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             foreach (var i in Enumerable.Range(1, 50))
             {
                 pansy.SomeProperty = new string('a', i);
@@ -44,7 +44,7 @@ namespace Harden.Tests.ValidationPluggability
         public void MinLengthWorks()
         {
             //Harden.Validation.Rules.Add(ValidateRequiredAttribute);
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             var ve = Assert.Throws<ValidationException>(() => pansy.SomeProperty = "");
             Assert.AreEqual(ve.Errors.Single().Field, "SomeProperty");
         }
@@ -53,7 +53,7 @@ namespace Harden.Tests.ValidationPluggability
         public void MaxLengthWorks()
         {
             //Harden.Validation.Rules.Add(ValidateRequiredAttribute);
-            var pansy = Hardener.Create(() => new Pansy());
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             var ve = Assert.Throws<ValidationException>(() => pansy.SomeProperty = new string('a', 51));
             Assert.AreEqual(ve.Errors.Single().Field, "SomeProperty");
         }

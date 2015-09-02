@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Allow.cs" />
+    <Compile Include="Allower.cs" />
     <Compile Include="Hardener.cs" />
     <Compile Include="HardenerExtensions.cs" />
     <Compile Include="HardenException.cs" />

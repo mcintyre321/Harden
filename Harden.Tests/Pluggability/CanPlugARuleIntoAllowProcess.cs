@@ -23,8 +23,9 @@ namespace Harden.Tests.Pluggability
         [Test]
         public void CanNotCallDisallowedMethod()
         {
-            Allow.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
-            var pansy = Hardener.Create(() => new Pansy());
+            var allower = new Allower();
+            allower.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
+            var pansy = Hardener.Create(() => new Pansy(), allower);
             NotAllowedByDynamicRuleAttribute.Allow = false;
             Assert.Throws<HardenException>(() => pansy.Weaknesses());
         }
@@ -32,8 +33,8 @@ namespace Harden.Tests.Pluggability
         [Test]
         public void CanCallAllowedMethod()
         {
-            Allow.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
-            var pansy = Hardener.Create(() => new Pansy());
+            Allow.Allower.Rules.Add(NotAllowedByDynamicRuleAttribute.Rule);
+            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
             NotAllowedByDynamicRuleAttribute.Allow = true;
             Assert.AreEqual("Peanut allergy", pansy.Weaknesses());
         }
