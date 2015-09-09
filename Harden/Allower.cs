@@ -17,54 +17,54 @@ namespace Harden
             Allow.CheckAttributes
         };
 
-        internal bool DoAllow(object obj, MethodInfo mi)
+        internal bool DoAllow(object obj, MethodInfo mi, object context)
         {
-            return Rules.Select(r => r(obj, mi)).FirstOrDefault(r => r != null) ?? true;
+            return Rules.Select(r => r(obj, mi, context)).FirstOrDefault(r => r != null) ?? true;
         }
-        public bool Call(object o, string methodName)
+        public bool Call(object o, string methodName, object context)
         {
-            return Call(o, o.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public));
+            return Call(o, o.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public), context);
         }
-        public bool Call(object o, MethodInfo mi)
+        public bool Call(object o, MethodInfo mi, object context)
         {
-            return DoAllow(o, mi);
+            return DoAllow(o, mi, context);
         }
         #region Get
-        public bool Get<T>(Expression<Func<T>> t)
+        public bool Get<T>(Expression<Func<T>> t, object context)
         {
             var tup = StaticReflector.GetObjAndProp(t);
-            return DoAllow(tup.Item1, tup.Item2.GetGetMethod());
+            return DoAllow(tup.Item1, tup.Item2.GetGetMethod(), context);
         }
-        public bool Get(object obj, string propertyName)
+        public bool Get(object obj, string propertyName, object context)
         {
             var prop = obj.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public);
-            return Get(obj, prop);
+            return Get(obj, prop, context);
         }
-        public bool Get(object o, PropertyInfo pi)
+        public bool Get(object o, PropertyInfo pi, object context)
         {
             if (!pi.CanRead) return false;
             var get = pi.GetGetMethod();
             if (get == null) return false;
-            return DoAllow(o, get);
+            return DoAllow(o, get, context);
         }
         #endregion
         #region set
-        public bool Set(object o, PropertyInfo pi)
+        public bool Set(object o, PropertyInfo pi, object context)
         {
             if (!pi.CanWrite) return false;
             var set = pi.GetSetMethod();
             if (set == null) return false;
-            return DoAllow(o, set);
+            return DoAllow(o, set, context);
         }
-        public bool Set(object obj, string propertyName)
+        public bool Set(object obj, string propertyName, object context)
         {
             var prop = obj.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public);
-            return Set(obj, prop);
+            return Set(obj, prop, context);
         }
-        public bool Set<T>(Expression<Func<T>> t)
+        public bool Set<T>(Expression<Func<T>> t, object context)
         {
             var tup = StaticReflector.GetObjAndProp(t);
-            return DoAllow(tup.Item1, tup.Item2.GetSetMethod());
+            return DoAllow(tup.Item1, tup.Item2.GetSetMethod(), context);
         }
         #endregion
 

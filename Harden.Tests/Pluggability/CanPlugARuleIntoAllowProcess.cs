@@ -43,7 +43,7 @@ namespace Harden.Tests.Pluggability
     internal class NotAllowedByDynamicRuleAttribute : Attribute
     {
         public static bool? Allow;
-        public readonly static Allow.AllowRule Rule = (o, mi) =>
+        public readonly static Allow.AllowRule Rule = (o, mi, c) =>
         {
             var att = mi.GetCustomAttributes(typeof(NotAllowedByDynamicRuleAttribute), true).Cast<NotAllowedByDynamicRuleAttribute>().SingleOrDefault();
             if (att != null)

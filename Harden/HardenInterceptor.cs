@@ -22,7 +22,7 @@ namespace Harden
                 invocation.Proceed();
                 return;
             }
-            if (_allower.DoAllow(invocation.Proxy, invocation.Method) == false)
+            if (_allower.DoAllow(invocation.Proxy, invocation.Method, null) == false)
             {
                 throw new HardenException("Not allowed to call " + invocation.Method.Name);
             }

@@ -35,16 +35,14 @@ namespace Harden.Tests.AllowsExtension
                 return false;
             }
 
-            public virtual string SomeProperty2
-            {
-                get;
-                set;
-            }
+            public virtual string SomeProperty2  { get; set; }
+            public bool AllowSomeProperty2() { return true; }
 
-            public bool AllowSomeProperty2()
+            public virtual string MethodUsingContext()
             {
-                return true;
+                return "hello";
             }
+            public bool AllowMethodUsingContext(object context) { return context as bool? ?? false; }
 
 
         }
@@ -53,8 +51,16 @@ namespace Harden.Tests.AllowsExtension
         public void WorksWithMethodCallByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.AllowCall("SomeMethod"));
+            Assert.IsFalse(pansy.AllowCall("SomeMethod", null));
         }
+        [Test]
+        public void WorksWithContextVariable()
+        {
+            var pansy = Hardener.Harden(new Pansy());
+            Assert.IsTrue(pansy.AllowCall(nameof(Pansy.MethodUsingContext), true));
+            Assert.IsFalse(pansy.AllowCall(nameof(Pansy.MethodUsingContext), false));
+        }
+
 
         //[Test]
         //public void WorksWithMethodCallByLambda()
@@ -73,34 +79,34 @@ namespace Harden.Tests.AllowsExtension
         public void WorksWithPropertyCallToSetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.AllowCall("get_SomeProperty"));
+            Assert.IsFalse(pansy.AllowCall("get_SomeProperty", null));
         }
         [Test]
         public void WorksWithPropertyCallToGetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.AllowCall("set_SomeProperty"));
+            Assert.IsFalse(pansy.AllowCall("set_SomeProperty", null));
         }
 
         [Test]
         public void WorksWithPropertyGetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.AllowGet("SomeProperty"));
+            Assert.IsFalse(pansy.AllowGet("SomeProperty", null));
         }
 
         [Test]
         public void WorksWithPropertySetByName()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(pansy.AllowSet("SomeProperty"));
+            Assert.IsFalse(pansy.AllowSet("SomeProperty", null));
         }
 
         [Test]
         public void WorksWithPropertyGetByLambda()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(Allow.Get(() => pansy.SomeProperty));
+            Assert.IsFalse(Allow.Get(() => pansy.SomeProperty, null));
             ;
         }
 
@@ -108,7 +114,7 @@ namespace Harden.Tests.AllowsExtension
         public void WorksWithPropertySetByLambda()
         {
             var pansy = Hardener.Harden(new Pansy());
-            Assert.IsFalse(Allow.Set(() => pansy.SomeProperty));
+            Assert.IsFalse(Allow.Set(() => pansy.SomeProperty, null));
         }
     }
 
