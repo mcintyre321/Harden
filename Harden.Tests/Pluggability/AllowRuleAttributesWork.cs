@@ -51,7 +51,7 @@ namespace Harden.Tests.Pluggability
     public class DisallowRule : Attribute, IAllowRule
     {
 
-        public bool? Allow(object o, MethodInfo methodbeingcalled, object context)
+        public AllowResult Allow(object o, MethodInfo methodbeingcalled, object context)
         {
             return false;
         }

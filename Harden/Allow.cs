@@ -82,7 +82,8 @@ namespace Harden
         public static AllowRule CheckClassLevelAllow = (o, mi, c) =>
         {
             var globalAllowMethod = (mi.DeclaringType.GetRuntimeMethod("Allow"));
-            return globalAllowMethod?.Invoke(o, new object[] {mi}) as bool?;
+            if (globalAllowMethod == null) return null;
+            return globalAllowMethod.Invoke(o, new object[] {mi}) as bool?;
         };
         #region nuts n bolts (DoAllow)
 
@@ -98,7 +99,8 @@ namespace Harden
                 var args = parameters.Length == 0
                     ? new object[] {}
                     : new object[] {context};
-                var allowed = (bool?)allowMethod.Invoke(target, args);
+                var invoke = allowMethod.Invoke(target, args);
+                var allowed = (bool?)invoke;
                 return allowed;
             }
             return null;
