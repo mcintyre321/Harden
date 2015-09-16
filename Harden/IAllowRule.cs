@@ -8,6 +8,6 @@ namespace Harden
 {
     public interface IAllowRule
     {
-        bool? Allow(object o, MethodInfo methodbeingcalled);
+        bool? Allow(object o, MethodInfo methodbeingcalled, object context);
     }
 }

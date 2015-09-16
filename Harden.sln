@@ -1,9 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harden", "Harden\Harden.csproj", "{3F7E0967-0768-4702-B3AD-9ED268C84A13}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harden.Tests", "Harden.Tests\Harden.Tests.csproj", "{501CDD31-5CC1-4612-85FA-1F2DA627F366}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harden", "Harden\Harden.csproj", "{291D4104-4C25-47AB-BCB1-8EF289646458}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harden.Proxy", "Harden.Proxy\Harden.Proxy.csproj", "{3F7E0967-0768-4702-B3AD-9ED268C84A13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Release|Any CPU.Build.0 = Release|Any CPU
 		{501CDD31-5CC1-4612-85FA-1F2DA627F366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{501CDD31-5CC1-4612-85FA-1F2DA627F366}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{501CDD31-5CC1-4612-85FA-1F2DA627F366}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{501CDD31-5CC1-4612-85FA-1F2DA627F366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{291D4104-4C25-47AB-BCB1-8EF289646458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{291D4104-4C25-47AB-BCB1-8EF289646458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{291D4104-4C25-47AB-BCB1-8EF289646458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{291D4104-4C25-47AB-BCB1-8EF289646458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F7E0967-0768-4702-B3AD-9ED268C84A13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

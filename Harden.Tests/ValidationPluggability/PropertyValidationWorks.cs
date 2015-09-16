@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Harden.ValidationAttributes;
 using NUnit.Framework;
 
 namespace Harden.Tests.ValidationPluggability
@@ -21,7 +20,7 @@ namespace Harden.Tests.ValidationPluggability
         public void NotNullWorks()
         {
             Harden.Validation.Rules.AddPropertyRule((Pansy p) => p.SomeProperty, ReturnErrorIfNull);
-            var pansy = Hardener.Create(() => new Pansy(), Allow.Allower);
+            var pansy = Hardener.Create<Pansy>(() => new Pansy(), Allow.Allower);
             pansy.SomeProperty = "Not going to throw an error";
             var ve = Assert.Throws<ValidationException>(() => pansy.SomeProperty = null);
             Assert.AreEqual(ve.Errors.Single().Field, "SomeProperty");

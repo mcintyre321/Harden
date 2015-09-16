@@ -1,11 +1,26 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Castle.Core.Internal;
 
 namespace Harden
 {
+    static class ReflectionExtension
+    {
+        static ConcurrentDictionary<Tuple<Type, string>, MethodInfo> cache = new ConcurrentDictionary<Tuple<Type,string>,MethodInfo>();
+        public static MethodInfo GetRuntimeMethod(this Type ti, string methodName)
+        {
+            return cache.GetOrAdd(Tuple.Create(ti, methodName), key =>
+            {
+                var runtimeMethods = ti.GetRuntimeMethods();
+                var methodInfo = runtimeMethods.FirstOrDefault(m => m.Name == methodName);
+                return methodInfo;
+            });
+        }
+
+    }
     public class Allow
     {
         static Allow()
@@ -19,18 +34,17 @@ namespace Harden
 
         public static bool? CheckAttributes(object obj, MethodInfo methodbeingcalled, object context)
         {
-            var attributes = methodbeingcalled.GetAttributes<IAllowRule>();
+            var attributes = methodbeingcalled.GetCustomAttributes().OfType<IAllowRule>();
             var propertyInfo = GetPropFromMethod(methodbeingcalled.DeclaringType, methodbeingcalled);
-            if (propertyInfo != null) attributes = attributes.Concat(propertyInfo.GetAttributes<IAllowRule>()).ToArray();
+            if (propertyInfo != null) attributes = attributes.Concat(propertyInfo.GetCustomAttributes().OfType<IAllowRule>()).ToArray();
             return attributes
-                .Select(r => r.Allow(obj, methodbeingcalled)).FirstOrDefault(v => v != null);
+                .Select(r => r.Allow(obj, methodbeingcalled, context)).FirstOrDefault(v => v != null);
         }
 
         public static PropertyInfo GetPropFromMethod(Type t, MethodInfo method)
         {
             if (!method.IsSpecialName) return null;
-            return t.GetProperty(method.Name.Substring(4),
-              BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            return t.GetRuntimeProperty(method.Name.Substring(4));
         }
 
       
@@ -67,12 +81,8 @@ namespace Harden
 
         public static AllowRule CheckClassLevelAllow = (o, mi, c) =>
         {
-            var globalAllowMethod = (mi.DeclaringType.GetMethod("Allow"));
-            if (globalAllowMethod != null)
-            {
-                return globalAllowMethod.Invoke(o, new object[] {mi}) as bool?;
-            }
-            return null;
+            var globalAllowMethod = (mi.DeclaringType.GetRuntimeMethod("Allow"));
+            return globalAllowMethod?.Invoke(o, new object[] {mi}) as bool?;
         };
         #region nuts n bolts (DoAllow)
 
@@ -81,7 +91,7 @@ namespace Harden
         private static bool? ExecuteAllowMethod(object target, string allowMethodName, object context)
         {
             Type type = target.GetType();
-            var allowMethod = (type.GetMethod(allowMethodName));
+            var allowMethod = (type.GetRuntimeMethod(allowMethodName));
             if (allowMethod != null)
             {
                 var parameters = allowMethod.GetParameters();
@@ -97,7 +107,7 @@ namespace Harden
 
         public static bool Call(object o, string methodName, object context)
         {
-            return Call(o, o.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public), context);
+            return Call(o, o.GetType().GetRuntimeMethod(methodName), context);
         }
         public static bool Call(object o, MethodInfo mi, object context)
         {
