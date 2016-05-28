@@ -27,7 +27,7 @@ namespace Harden
         {
             rules.Add((o, m, a) =>
             {
-                if (m == pi.GetSetMethod())
+                if (m == pi.SetMethod)
                 {
                     return rule(o, pi, a[0]);
                 }
@@ -69,11 +69,12 @@ namespace Harden
             return (obj, mi, args) => AttributeValidationRule(rule, obj, mi, args);
         }
         private static IEnumerable<Tuple<string, string>> AttributeValidationRule<TAttribute>(AttributeRuleImpl<TAttribute> rule, dynamic obj, MethodInfo mi, object[] args)
+            where TAttribute : Attribute
         {
             var isProperty = mi.Name.StartsWith("set_");
             var name = isProperty ? mi.Name.Substring(4) : mi.Name;
             var atts = isProperty
-                           ? mi.DeclaringType.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetCustomAttributes(typeof(TAttribute), true)
+                           ? mi.DeclaringType.GetTypeInfo().GetDeclaredProperty(name).GetCustomAttributes(typeof(TAttribute), true)
                            : mi.GetCustomAttributes(typeof(TAttribute), true);
 
             if (atts != null && atts.Any())

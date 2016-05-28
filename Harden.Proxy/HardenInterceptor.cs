@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
@@ -32,26 +30,5 @@ namespace Harden
             invocation.Proceed();
         }
 
-    }
-    public class ValidationException : Exception
-    {
-        private List<Error> _errors = new List<Error>();
-        private object _object;
-
-        public ValidationException(object o, IEnumerable<Error> errors)
-        {
-            _object = o;
-            _errors.AddRange(errors);
-        }
-
-        public IEnumerable<Error> Errors
-        {
-            get { return _errors; }
-        }
-
-        public object Object
-        {
-            get { return _object; }
-        }
     }
 }

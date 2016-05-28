@@ -19,7 +19,7 @@ namespace Harden
 
         }
 
-        internal static void Execute(object obj, MethodInfo mi, object[] arguments)
+        public static void Execute(object obj, MethodInfo mi, object[] arguments)
         {
             if (arguments.Length > 0) // we may need to validate these arguments...
             {
@@ -29,7 +29,7 @@ namespace Harden
                 {
                     name = name.Substring(4);
                 }
-                var validateMethod = obj.GetType().GetMethod("Validate" + name, BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public);
+                var validateMethod = obj.GetType().GetRuntimeMethod("Validate" + name);
                 if (validateMethod != null)
                 {
                     object[] args = null;
