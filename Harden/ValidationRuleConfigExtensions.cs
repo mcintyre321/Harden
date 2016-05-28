@@ -58,18 +58,18 @@ namespace Harden
             yield return t2;
         }
 
-        public static void AddFor<TAttribute>(this IList<Validation.ValidationRule> rules, AttributeRuleImpl<TAttribute> rule)
+        public static void AddFor<TAttribute>(this IList<Validation.ValidationRule> rules, AttributeRuleImpl<TAttribute> rule) where TAttribute : Attribute
         {
             rules.Add(MakeRule(rule));
         }
 
         public delegate IEnumerable<Tuple<string, string>> AttributeRuleImpl<TAtt>(TAtt att, object o, MethodInfo mi, object[] parameters);
-        static Validation.ValidationRule MakeRule<TAttribute>(AttributeRuleImpl<TAttribute> rule)
+        static Validation.ValidationRule MakeRule<TAttribute>(AttributeRuleImpl<TAttribute> rule) where TAttribute : Attribute
         {
             return (obj, mi, args) => AttributeValidationRule(rule, obj, mi, args);
         }
         private static IEnumerable<Tuple<string, string>> AttributeValidationRule<TAttribute>(AttributeRuleImpl<TAttribute> rule, dynamic obj, MethodInfo mi, object[] args)
-            where TAttribute : Attribute
+            where TAttribute:Attribute
         {
             var isProperty = mi.Name.StartsWith("set_");
             var name = isProperty ? mi.Name.Substring(4) : mi.Name;
